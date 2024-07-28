@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 public class ProceduralGrid : MonoBehaviour
 {
     private List<int> boundaries;
-    private float[] compressedTiles;
+    private float[] compressedBlocks;
     private int[] compressedMasks;
     private int maskCount;
 
@@ -135,9 +135,9 @@ public class ProceduralGrid : MonoBehaviour
         col.SetCustomShapes(shapes);
     }
 
-    void SendTilesToMaterial()
+    void SendBlocksToMaterial()
     {
-        meshRenderer.material.SetFloatArray("_Tiles", compressedTiles);
+        meshRenderer.material.SetFloatArray("_Blocks", compressedBlocks);
     }
 
     public void CreateAll()
@@ -187,28 +187,28 @@ public class ProceduralGrid : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public static bool Create(Dictionary<TileBase, int> tileIdsLookup, TileBase[] tiles, Material material, out ProceduralGrid grid)
+    public static bool Create(Dictionary<TileBase, int> blockIdsLookup, TileBase[] blocks, Material material, out ProceduralGrid grid)
     {
-        float[] compressedTiles = new float[128];
+        float[] compressedBlocks = new float[128];
         int[] compressedMasks = new int[32];
 
         int maskCount = 0;
 
         int k = 0;
         int l = 0;
-        for (int i = 0; i < tiles.Length; i += 32)
+        for (int i = 0; i < blocks.Length; i += 32)
         {
             int m = 0;
             for (int j = 0; j < 32; j += 8)
             {
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j], out int t0, out int m0);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 1], out int t1, out int m1);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 2], out int t2, out int m2);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 3], out int t3, out int m3);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 4], out int t4, out int m4);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 5], out int t5, out int m5);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 6], out int t6, out int m6);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 7], out int t7, out int m7);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j], out int t0, out int m0);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 1], out int t1, out int m1);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 2], out int t2, out int m2);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 3], out int t3, out int m3);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 4], out int t4, out int m4);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 5], out int t5, out int m5);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 6], out int t6, out int m6);
+                GetBlockIdAndMask(blockIdsLookup, blocks[i + j + 7], out int t7, out int m7);
 
                 int t = (t7 << 28) + (t6 << 24) + (t5 << 20) + (t4 << 16)
                       + (t3 << 12) + (t2 << 8) + (t1 << 4) + t0;
@@ -218,7 +218,7 @@ public class ProceduralGrid : MonoBehaviour
 
                 maskCount += m7 + m6 + m5 + m4 + m3 + m2 + m1 + m0;
 
-                compressedTiles[l] = FloatHex(t);
+                compressedBlocks[l] = FloatHex(t);
                 l += 1;
             }
             compressedMasks[k] = m;
@@ -233,12 +233,12 @@ public class ProceduralGrid : MonoBehaviour
             obj.AddComponent<CustomCollider2D>();
 
             grid = obj.AddComponent<ProceduralGrid>();
-            grid.compressedTiles = compressedTiles;
+            grid.compressedBlocks = compressedBlocks;
             grid.compressedMasks = compressedMasks;
             grid.maskCount = maskCount;
             grid.meshRenderer.material = material;
 
-            grid.SendTilesToMaterial();
+            grid.SendBlocksToMaterial();
             grid.CreateAll();
             grid.UpdateAll();
 
@@ -251,9 +251,9 @@ public class ProceduralGrid : MonoBehaviour
         }
     }
 
-    static void GetTileIdAndMask(Dictionary<TileBase, int> tileIdsLookup, TileBase tile, out int id, out int mask)
+    static void GetBlockIdAndMask(Dictionary<TileBase, int> blockIdsLookup, TileBase block, out int id, out int mask)
     {
-        if (tile != null && tileIdsLookup.TryGetValue(tile, out id))
+        if (block != null && blockIdsLookup.TryGetValue(block, out id))
         {
             id &= 0xF;
             mask = 1;

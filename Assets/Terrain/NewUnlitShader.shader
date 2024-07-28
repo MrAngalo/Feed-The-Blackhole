@@ -31,20 +31,20 @@ Shader "Unlit/NewUnlitShader"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            float _Tiles[128];
+            float _Blocks[128];
 
-            int getTile(int2 pos)
+            int getBlock(int2 pos)
             {
                 int index = (pos.y << 5) + pos.x;
                 int subIndex = index >> 3;
                 int position = (index & 0x7) << 2;
-                uint tileGroup = asuint(_Tiles[subIndex]);
-                return (tileGroup >> position) & 0xF;
+                uint blockGroup = asuint(_Blocks[subIndex]);
+                return (blockGroup >> position) & 0xF;
             }
 
-            float2 getTileOffset(int tile) {
-                int u = tile & 0x3;
-                int v = 3 - ((tile >> 2) & 0x3);
+            float2 getBlockOffset(int block) {
+                int u = block & 0x3;
+                int v = 3 - ((block >> 2) & 0x3);
                 return float2(u*0.25, v*0.25);
             }
 
@@ -60,10 +60,10 @@ Shader "Unlit/NewUnlitShader"
             {
                 int2 pos = int2(i.uv);
                 float2 fracUV = i.uv - pos;
-                int tile = getTile(pos);
-                float2 offset = getTileOffset(tile);
-                float2 tileUV = 0.25 * fracUV + offset;
-                fixed4 col = tex2D(_MainTex, tileUV);
+                int block = getBlock(pos);
+                float2 offset = getBlockOffset(block);
+                float2 blockUV = 0.25 * fracUV + offset;
+                fixed4 col = tex2D(_MainTex, blockUV);
                 return col;
             }
             ENDCG

@@ -55,8 +55,8 @@ public class GridGroup : MonoBehaviour
             for (int y = bounds.yMin; y < bounds.yMax; y += 32)
             {
                 BoundsInt sub = new(x, y, 0, 32, 32, 1);
-                TileBase[] tiles = tilemap.GetTilesBlock(sub);
-                if (ProceduralGrid.Create(tileIdsLookup, tiles, material, out ProceduralGrid grid))
+                TileBase[] blocks = tilemap.GetTilesBlock(sub);
+                if (ProceduralGrid.Create(tileIdsLookup, blocks, material, out ProceduralGrid grid))
                 {
                     grid.transform.parent = transform;
                     grid.transform.position = tilemap.transform.TransformVector(x, y, 0);
