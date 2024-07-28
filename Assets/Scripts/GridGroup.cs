@@ -10,10 +10,10 @@ public class GridGroup : MonoBehaviour
     private Vector2 offset;
     private int worldWidth;
     private int worldHeight;
-    // Stores the indices of worldData in an array of size worldWidth * worldHeight
+    private int gridWidth;
+    private int gridHeight;
     private int[] worldDataIndex;
     private List<ProceduralGrid> worldData;
-
 
     public Material material;
     public TileBase[] tileIds;
@@ -41,9 +41,13 @@ public class GridGroup : MonoBehaviour
         BoundsInt bounds = tilemap.cellBounds;
         offset = new Vector2(bounds.xMin, bounds.yMin);
 
-        worldWidth = (bounds.size.x >> 5) + 1;
-        worldHeight = (bounds.size.y >> 5) + 1;
-        worldDataIndex = new int[worldWidth * worldHeight];
+        gridWidth = (bounds.size.x >> 5) + 1;
+        gridHeight = (bounds.size.y >> 5) + 1;
+
+        worldWidth = gridWidth << 5;
+        worldHeight = gridHeight << 5;
+        worldDataIndex = new int[gridWidth * gridHeight];
+        worldData = new();
 
         int i = 0;
         for (int x = bounds.xMin; x < bounds.xMax; x += 32)
@@ -76,5 +80,21 @@ public class GridGroup : MonoBehaviour
     {
         Destroy(tilemap.gameObject);
         Destroy(GetComponent<Grid>());
+    }
+
+    void BreakBlock(int x, int y) {
+        if (x < 0 || y < 0 || x >= worldWidth || y >= worldHeight)
+        {
+            return;
+        }
+        int index = (y * gridWidth + x) >> 5;
+        if (index == -1)
+        {
+            return;
+        }
+        int localX = x & 0x1F;
+        int localY = y & 0x1F;
+        ProceduralGrid grid = worldData[worldDataIndex[index]];
+        grid.BreakBlock(localX, localY);
     }
 }

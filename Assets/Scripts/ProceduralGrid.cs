@@ -32,7 +32,7 @@ public class ProceduralGrid : MonoBehaviour
     void GenerateBoundaries()
     {
         boundaries = new List<int>();
-        int[] layers = (int[])this.compressedMasks.Clone();
+        int[] layers = (int[])compressedMasks.Clone();
 
         for (int y = 0; y < layers.Length; y++)
         {
@@ -151,6 +151,13 @@ public class ProceduralGrid : MonoBehaviour
         UpdateMesh();
         UpdateMaterial();
         UpdateCollider();
+    }
+
+    // Assumes that x and y are bounded [0, 31]
+    public void BreakBlock(int x, int y) {
+        compressedMasks[y] &= ~(1 << x);
+        CreateAll();
+        UpdateAll();
     }
 
     public static bool Create(Dictionary<TileBase, int> tileIdsLookup, TileBase[] tiles, Material material, out ProceduralGrid grid)
