@@ -31,7 +31,7 @@ public class GridGroup : MonoBehaviour
     void Start()
     {
         CreateProceduralGrid();
-        CleanUp();
+        RemoveTilemap();
     }
 
     void CreateProceduralGrid()
@@ -74,7 +74,7 @@ public class GridGroup : MonoBehaviour
         }
     }
 
-    void CleanUp()
+    void RemoveTilemap()
     {
         Destroy(tilemap.gameObject);
         Destroy(GetComponent<Grid>());
