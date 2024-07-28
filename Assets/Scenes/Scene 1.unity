@@ -32842,7 +32842,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f1c28e64a9cf9e4587fa0f5e4bd9f91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridPrefab: {fileID: 6329300118897110542, guid: 68fe6bba77dca154cacd26bd49ceba73, type: 3}
+  material: {fileID: 2100000, guid: e9df6e26d085d0848b8ff576616edc54, type: 2}
+  tileIds:
+  - {fileID: 11400000, guid: 19cdf62965938cb4fbafbb595a60afd4, type: 2}
+  - {fileID: 11400000, guid: f9bb6a05177a40a4583c7557c3375c55, type: 2}
+  - {fileID: 11400000, guid: 7dac319a6aca54041ad2195868073e02, type: 2}
+  - {fileID: 11400000, guid: f1f0e292f8d107b4b9af9c46d696e168, type: 2}
+  - {fileID: 11400000, guid: fff17d369214c5444ab810a4b5377b09, type: 2}
+  - {fileID: 11400000, guid: 66e12d0ca205320468208201f8e90e04, type: 2}
+  - {fileID: 11400000, guid: 7a6b8595f7d80054d94f3d036a235810, type: 2}
+  - {fileID: 11400000, guid: dcf956527186c874c9daf935262c84fd, type: 2}
+  - {fileID: 11400000, guid: 10ac5fd63695b3a40ac716cf8ddc18f9, type: 2}
+  - {fileID: 11400000, guid: 4f77a40c962640a4db52a185f1acb9c1, type: 2}
+  - {fileID: 11400000, guid: a4effed2a0e6a5f46a265f3b23caa011, type: 2}
+  - {fileID: 11400000, guid: 40640e5c5dad331479ebdf7310201446, type: 2}
+  - {fileID: 11400000, guid: 076294386934fdb47af5fb2305568c8f, type: 2}
+  - {fileID: 11400000, guid: 7fc8c2245ff5d814d9421a436fe889ad, type: 2}
+  - {fileID: 11400000, guid: 618eae7fae71d0b43ad6cac234f3771b, type: 2}
+  - {fileID: 11400000, guid: 7739a43f8f78d4648bae92dbdb8ee9af, type: 2}
 --- !u!1 &1948972218
 GameObject:
   m_ObjectHideFlags: 0

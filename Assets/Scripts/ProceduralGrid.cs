@@ -66,24 +66,14 @@ public class ProceduralGrid : MonoBehaviour
     private int[] triangles;
     private Vector2[] uv;
 
-    private Dictionary<TileBase, int> tileIdsLookup;
-
     public Vector2 pivot = Vector2.zero;
-    public float unit = 0.5f;
-    public TileBase[] tileIds;
+    public float unit = 1f;
 
     void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
         col = GetComponent<CustomCollider2D>();
         material = GetComponent<MeshRenderer>().material;
-
-        tileIdsLookup = new Dictionary<TileBase, int>();
-        for (int i = 0; i < tileIds.Length; i += 1)
-        {
-            TileBase tile = tileIds[i];
-            tileIdsLookup[tile] = i;
-        }
     }
 
     // void Start()
@@ -97,10 +87,12 @@ public class ProceduralGrid : MonoBehaviour
     // }
 
     // A list of 32 x 32 tiles
-    public void CreateTilesAndMask(TileBase[] tiles)
+    public static bool Create(Dictionary<TileBase, int> tileIdsLookup, TileBase[] tiles, Material material, out ProceduralGrid grid)
     {
-        compressedTiles = new float[128];
-        compressedMasks = new int[32];
+        float[] compressedTiles = new float[128];
+        int[] compressedMasks = new int[32];
+
+        int count = 0;
 
         int k = 0;
         int l = 0;
@@ -109,14 +101,14 @@ public class ProceduralGrid : MonoBehaviour
             int m = 0;
             for (int j = 0; j < 32; j += 8)
             {
-                GetTileIdAndMask(tiles[i + j], out int t0, out int m0);
-                GetTileIdAndMask(tiles[i + j + 1], out int t1, out int m1);
-                GetTileIdAndMask(tiles[i + j + 2], out int t2, out int m2);
-                GetTileIdAndMask(tiles[i + j + 3], out int t3, out int m3);
-                GetTileIdAndMask(tiles[i + j + 4], out int t4, out int m4);
-                GetTileIdAndMask(tiles[i + j + 5], out int t5, out int m5);
-                GetTileIdAndMask(tiles[i + j + 6], out int t6, out int m6);
-                GetTileIdAndMask(tiles[i + j + 7], out int t7, out int m7);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j], out int t0, out int m0);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 1], out int t1, out int m1);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 2], out int t2, out int m2);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 3], out int t3, out int m3);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 4], out int t4, out int m4);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 5], out int t5, out int m5);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 6], out int t6, out int m6);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 7], out int t7, out int m7);
 
                 int t = (t7 << 28) + (t6 << 24) + (t5 << 20) + (t4 << 16)
                       + (t3 << 12) + (t2 << 8) + (t1 << 4) + t0;
@@ -124,11 +116,49 @@ public class ProceduralGrid : MonoBehaviour
                 m += (m7 << (j + 7)) + (m6 << (j + 6)) + (m5 << (j + 5)) + (m4 << (j + 4))
                    + (m3 << (j + 3)) + (m2 << (j + 2)) + (m1 << (j + 1)) + (m0 << j);
 
+                count += m7 + m6 + m5 + m4 + m3 + m2 + m1 + m0;
+
                 compressedTiles[l] = FloatHex(t);
                 l += 1;
             }
             compressedMasks[k] = m;
             k += 1;
+        }
+
+        if (count > 0)
+        {
+            GameObject obj = new("Procedural Grid");
+            obj.AddComponent<MeshFilter>();
+
+            MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
+            renderer.material = material;
+
+            obj.AddComponent<CustomCollider2D>();
+
+            grid = obj.AddComponent<ProceduralGrid>();
+            grid.compressedTiles = compressedTiles;
+            grid.compressedMasks = compressedMasks;
+
+            return true;
+        }
+        else
+        {
+            grid = null;
+            return false;
+        }
+    }
+
+    static void GetTileIdAndMask(Dictionary<TileBase, int> tileIdsLookup, TileBase tile, out int id, out int mask)
+    {
+        if (tile != null && tileIdsLookup.TryGetValue(tile, out id))
+        {
+            id &= 0xF;
+            mask = 1;
+        }
+        else
+        {
+            id = 0;
+            mask = 0;
         }
     }
 
@@ -207,7 +237,7 @@ public class ProceduralGrid : MonoBehaviour
     void CreateCollider()
     {
         shapes = new PhysicsShapeGroup2D();
-        Vector3 position = transform.position;
+        Vector3 position = transform.localPosition;
         for (int i = 0; i < vertices.Length; i += 4)
         {
             List<Vector2> shape = new(4)
@@ -253,20 +283,6 @@ public class ProceduralGrid : MonoBehaviour
         UpdateMesh();
         UpdateMaterial();
         UpdateCollider();
-    }
-
-    void GetTileIdAndMask(TileBase tile, out int id, out int mask)
-    {
-        if (tile != null && tileIdsLookup.TryGetValue(tile, out id))
-        {
-            id &= 0xF;
-            mask = 1;
-        }
-        else
-        {
-            id = 0;
-            mask = 0;
-        }
     }
 
     // Modified from https://stackoverflow.com/questions/10439242/count-leading-zeroes-in-an-int32
