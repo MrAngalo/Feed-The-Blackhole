@@ -87,7 +87,7 @@ public class GridGroup : MonoBehaviour
             return;
         }
         int index = (y >> 5) * gridWidth + (x >> 5);
-        if (index == -1)
+        if (worldDataIndex[index] == -1)
         {
             return;
         }
