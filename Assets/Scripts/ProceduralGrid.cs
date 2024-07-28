@@ -6,52 +6,6 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(CustomCollider2D))]
 public class ProceduralGrid : MonoBehaviour
 {
-    // float[] compressedTiles = unchecked(new float[] {
-    //     FloatHex(0x00000000), FloatHex(0x11111111), FloatHex(0x22222222), FloatHex(0x33333333),
-    //     FloatHex(0x44444444), FloatHex(0x55555555), FloatHex(0x66666666), FloatHex(0x77777777),
-    //     FloatHex(0x88888888), FloatHex(0x99999999), FloatHex(0xAAAAAAAA), FloatHex(0xBBBBBBBB),
-    //     FloatHex(0xCCCCCCCC), FloatHex(0xDDDDDDDD), FloatHex(0xEEEEEEEE), FloatHex(0xFFFFFFFF),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    //     FloatHex(0x76543210), FloatHex(0xfedcba98), FloatHex(0x76543210), FloatHex(0xfedcba98),
-    // });
-
-    // int[] compressedMasks = unchecked(new int[] {
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    //     (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF, (int) 0xFFFFFFFF,
-    // });
-
     private List<int> boundaries;
     private float[] compressedTiles;
     private int[] compressedMasks;
@@ -73,90 +27,6 @@ public class ProceduralGrid : MonoBehaviour
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         col = GetComponent<CustomCollider2D>();
-    }
-
-    // void Start()
-    // {
-    //     GenerateBoundaries();
-    //     CreateMesh();
-    //     CreateCollider();
-    //     UpdateMesh();
-    //     UpdateMaterial();
-    //     UpdateCollider();
-    // }
-
-    // A list of 32 x 32 tiles
-    public static bool Create(Dictionary<TileBase, int> tileIdsLookup, TileBase[] tiles, Material material, out ProceduralGrid grid)
-    {
-        float[] compressedTiles = new float[128];
-        int[] compressedMasks = new int[32];
-
-        int count = 0;
-
-        int k = 0;
-        int l = 0;
-        for (int i = 0; i < tiles.Length; i += 32)
-        {
-            int m = 0;
-            for (int j = 0; j < 32; j += 8)
-            {
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j], out int t0, out int m0);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 1], out int t1, out int m1);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 2], out int t2, out int m2);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 3], out int t3, out int m3);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 4], out int t4, out int m4);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 5], out int t5, out int m5);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 6], out int t6, out int m6);
-                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 7], out int t7, out int m7);
-
-                int t = (t7 << 28) + (t6 << 24) + (t5 << 20) + (t4 << 16)
-                      + (t3 << 12) + (t2 << 8) + (t1 << 4) + t0;
-
-                m += (m7 << (j + 7)) + (m6 << (j + 6)) + (m5 << (j + 5)) + (m4 << (j + 4))
-                   + (m3 << (j + 3)) + (m2 << (j + 2)) + (m1 << (j + 1)) + (m0 << j);
-
-                count += m7 + m6 + m5 + m4 + m3 + m2 + m1 + m0;
-
-                compressedTiles[l] = FloatHex(t);
-                l += 1;
-            }
-            compressedMasks[k] = m;
-            k += 1;
-        }
-
-        if (count > 0)
-        {
-            GameObject obj = new("Procedural Grid");
-            obj.AddComponent<MeshFilter>();
-            obj.AddComponent<MeshRenderer>();
-            obj.AddComponent<CustomCollider2D>();
-
-            grid = obj.AddComponent<ProceduralGrid>();
-            grid.compressedTiles = compressedTiles;
-            grid.compressedMasks = compressedMasks;
-            grid.meshRenderer.material = material;
-
-            return true;
-        }
-        else
-        {
-            grid = null;
-            return false;
-        }
-    }
-
-    static void GetTileIdAndMask(Dictionary<TileBase, int> tileIdsLookup, TileBase tile, out int id, out int mask)
-    {
-        if (tile != null && tileIdsLookup.TryGetValue(tile, out id))
-        {
-            id &= 0xF;
-            mask = 1;
-        }
-        else
-        {
-            id = 0;
-            mask = 0;
-        }
     }
 
     void GenerateBoundaries()
@@ -281,6 +151,79 @@ public class ProceduralGrid : MonoBehaviour
         UpdateMesh();
         UpdateMaterial();
         UpdateCollider();
+    }
+
+    public static bool Create(Dictionary<TileBase, int> tileIdsLookup, TileBase[] tiles, Material material, out ProceduralGrid grid)
+    {
+        float[] compressedTiles = new float[128];
+        int[] compressedMasks = new int[32];
+
+        int count = 0;
+
+        int k = 0;
+        int l = 0;
+        for (int i = 0; i < tiles.Length; i += 32)
+        {
+            int m = 0;
+            for (int j = 0; j < 32; j += 8)
+            {
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j], out int t0, out int m0);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 1], out int t1, out int m1);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 2], out int t2, out int m2);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 3], out int t3, out int m3);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 4], out int t4, out int m4);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 5], out int t5, out int m5);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 6], out int t6, out int m6);
+                GetTileIdAndMask(tileIdsLookup, tiles[i + j + 7], out int t7, out int m7);
+
+                int t = (t7 << 28) + (t6 << 24) + (t5 << 20) + (t4 << 16)
+                      + (t3 << 12) + (t2 << 8) + (t1 << 4) + t0;
+
+                m += (m7 << (j + 7)) + (m6 << (j + 6)) + (m5 << (j + 5)) + (m4 << (j + 4))
+                   + (m3 << (j + 3)) + (m2 << (j + 2)) + (m1 << (j + 1)) + (m0 << j);
+
+                count += m7 + m6 + m5 + m4 + m3 + m2 + m1 + m0;
+
+                compressedTiles[l] = FloatHex(t);
+                l += 1;
+            }
+            compressedMasks[k] = m;
+            k += 1;
+        }
+
+        if (count > 0)
+        {
+            GameObject obj = new("Procedural Grid");
+            obj.AddComponent<MeshFilter>();
+            obj.AddComponent<MeshRenderer>();
+            obj.AddComponent<CustomCollider2D>();
+
+            grid = obj.AddComponent<ProceduralGrid>();
+            grid.compressedTiles = compressedTiles;
+            grid.compressedMasks = compressedMasks;
+            grid.meshRenderer.material = material;
+
+            return true;
+        }
+        else
+        {
+            grid = null;
+            return false;
+        }
+    }
+
+    static void GetTileIdAndMask(Dictionary<TileBase, int> tileIdsLookup, TileBase tile, out int id, out int mask)
+    {
+        if (tile != null && tileIdsLookup.TryGetValue(tile, out id))
+        {
+            id &= 0xF;
+            mask = 1;
+        }
+        else
+        {
+            id = 0;
+            mask = 0;
+        }
     }
 
     // Modified from https://stackoverflow.com/questions/10439242/count-leading-zeroes-in-an-int32
