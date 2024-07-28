@@ -11,7 +11,7 @@ public class GridGroup : MonoBehaviour
     private int worldWidth;
     private int worldHeight;
     // Stores the indices of worldData in an array of size worldWidth * worldHeight
-    private int[] worldDataLookup;
+    private int[] worldDataIndex;
     private List<ProceduralGrid> worldData;
 
 
@@ -43,7 +43,7 @@ public class GridGroup : MonoBehaviour
 
         worldWidth = (bounds.size.x >> 5) + 1;
         worldHeight = (bounds.size.y >> 5) + 1;
-        worldDataLookup = new int[worldWidth * worldHeight];
+        worldDataIndex = new int[worldWidth * worldHeight];
 
         int i = 0;
         for (int x = bounds.xMin; x < bounds.xMax; x += 32)
@@ -60,12 +60,12 @@ public class GridGroup : MonoBehaviour
                     grid.CreateAll();
                     grid.UpdateAll();
 
-                    worldDataLookup[i] = worldData.Count;
+                    worldDataIndex[i] = worldData.Count;
                     worldData.Add(grid);
                 }
                 else
                 {
-                    worldDataLookup[i] = -1;
+                    worldDataIndex[i] = -1;
                 }
                 i++;
             }
