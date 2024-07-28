@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GridGroup : MonoBehaviour
+public class World : MonoBehaviour
 {
     private Tilemap tilemap;
     private Dictionary<TileBase, int> tileIdsLookup;
