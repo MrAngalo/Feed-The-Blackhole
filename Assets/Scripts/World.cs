@@ -15,6 +15,9 @@ public class World : MonoBehaviour
     private int[] worldDataIndex;
     private List<ProceduralGrid> worldData;
 
+    public int WorldWidth { get => worldWidth; }
+    public int WorldHeight { get => worldHeight; }
+
     public Material material;
     public TileBase[] tileIds;
 
@@ -80,7 +83,7 @@ public class World : MonoBehaviour
         Destroy(GetComponent<Grid>());
     }
 
-    void BreakBlock(int x, int y)
+    public void BreakBlock(int x, int y)
     {
         if (x < 0 || y < 0 || x >= worldWidth || y >= worldHeight)
         {
@@ -106,23 +109,23 @@ public class World : MonoBehaviour
         }
     }
 
-    int GetHighestY(int x)
+    public int GetHighestY(int x)
     {
         if (x < 0 || x >= worldWidth)
         {
             return -1;
         }
 
-        int y = worldHeight - 32;
+        int y = (worldHeight - 1) & ~0x1F;
         int index = (y >> 5) * gridWidth + (x >> 5);
         while (y >= 0)
         {
+            index = (y >> 5) * gridWidth + (x >> 5);
             if (worldDataIndex[index] != -1)
             {
                 break;
             }
             y -= 32;
-            index = (y >> 5) * gridWidth + (x >> 5);
         }
         if (worldDataIndex[index] != -1)
         {

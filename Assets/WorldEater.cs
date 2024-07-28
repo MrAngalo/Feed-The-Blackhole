@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(World))]
 public class WorldEater : MonoBehaviour
 {
-    // Start is called before the first frame update
+    World world;
+
     void Start()
     {
-        
+        world = GetComponent<World>();    
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        int x = Random.Range(0, world.WorldWidth);
+        int y = world.GetHighestY(x);
+        world.BreakBlock(x, y);
     }
 }
