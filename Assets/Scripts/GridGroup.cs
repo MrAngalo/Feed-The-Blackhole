@@ -1,24 +1,19 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Test : MonoBehaviour
+public class GridGroup : MonoBehaviour
 {
-    private Tilemap tilemap;
-
     public GameObject gridPrefab;
 
-    // Start is called before the first frame update
     void Start()
     {
-        tilemap = GetComponent<Tilemap>();
+        CreateGridGroup();
+        CleanUp();
+    }
+
+    void CreateGridGroup() {
+        Tilemap tilemap = GetComponentInChildren<Tilemap>();
         BoundsInt bounds = tilemap.cellBounds;
-        Debug.Log(bounds);
         for (int x = bounds.xMin; x < bounds.xMax; x+= 32) {
             for (int y = bounds.yMin; y < bounds.yMax; y+= 32) {
                 BoundsInt sub = new BoundsInt(x, y, 0, 32, 32, 1);
@@ -30,9 +25,9 @@ public class Test : MonoBehaviour
 
     void CreateProceduralGrid(int x, int y, TileBase[] tiles)
     {
-        Vector3 position = new Vector3(x, y, 0);
+        Vector3 position = new(x, y, 0);
         ProceduralGrid grid = Instantiate(gridPrefab).GetComponent<ProceduralGrid>();
-        grid.transform.parent = transform.parent;
+        grid.transform.parent = transform;
         grid.transform.localPosition = position;
         grid.transform.localScale = Vector3.one;
         grid.CreateTilesAndMask(tiles);
@@ -40,9 +35,9 @@ public class Test : MonoBehaviour
         grid.UpdateAll();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
+    void CleanUp() {
+        Tilemap tilemap = GetComponentInChildren<Tilemap>();
+        Destroy(tilemap.gameObject);
+        Destroy(GetComponent<Grid>());
     }
 }

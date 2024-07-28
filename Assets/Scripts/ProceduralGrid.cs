@@ -168,8 +168,6 @@ public class ProceduralGrid : MonoBehaviour
 
         Vector3 o = new(-pivot.x * 32, -pivot.y * 32, 0);
 
-        Debug.Log(pivot);
-
         int i = 0;
         int j = 0;
         foreach (int b in boundaries)
