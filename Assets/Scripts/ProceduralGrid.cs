@@ -56,11 +56,10 @@ public class ProceduralGrid : MonoBehaviour
     private float[] compressedTiles;
     private int[] compressedMasks;
 
+    private MeshFilter meshFilter;
+    private MeshRenderer meshRenderer;
     private CustomCollider2D col;
     private PhysicsShapeGroup2D shapes;
-
-    private Mesh mesh;
-    private Material material;
 
     private Vector3[] vertices;
     private int[] triangles;
@@ -71,9 +70,9 @@ public class ProceduralGrid : MonoBehaviour
 
     void Awake()
     {
-        mesh = GetComponent<MeshFilter>().mesh;
+        meshFilter = GetComponent<MeshFilter>();
+        meshRenderer = GetComponent<MeshRenderer>();
         col = GetComponent<CustomCollider2D>();
-        material = GetComponent<MeshRenderer>().material;
     }
 
     // void Start()
@@ -129,15 +128,13 @@ public class ProceduralGrid : MonoBehaviour
         {
             GameObject obj = new("Procedural Grid");
             obj.AddComponent<MeshFilter>();
-
-            MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
-            renderer.material = material;
-
+            obj.AddComponent<MeshRenderer>();
             obj.AddComponent<CustomCollider2D>();
 
             grid = obj.AddComponent<ProceduralGrid>();
             grid.compressedTiles = compressedTiles;
             grid.compressedMasks = compressedMasks;
+            grid.meshRenderer.material = material;
 
             return true;
         }
@@ -253,6 +250,7 @@ public class ProceduralGrid : MonoBehaviour
 
     void UpdateMesh()
     {
+        Mesh mesh = meshFilter.mesh;
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
@@ -268,7 +266,7 @@ public class ProceduralGrid : MonoBehaviour
 
     void UpdateMaterial()
     {
-        material.SetFloatArray("_Tiles", compressedTiles);
+        meshRenderer.material.SetFloatArray("_Tiles", compressedTiles);
     }
 
     public void CreateAll()
