@@ -5,9 +5,15 @@ using UnityEngine.Tilemaps;
 public class GridGroup : MonoBehaviour
 {
     private Tilemap tilemap;
+    private Dictionary<TileBase, int> tileIdsLookup;
 
     private Vector2 offset;
-    private Dictionary<TileBase, int> tileIdsLookup;
+    private int worldWidth;
+    private int worldHeight;
+    // Stores the indices of worldData in an array of size worldWidth * worldHeight
+    private int[] worldDataLookup;
+    private List<ProceduralGrid> worldData;
+
 
     public Material material;
     public TileBase[] tileIds;
@@ -24,37 +30,45 @@ public class GridGroup : MonoBehaviour
 
     void Start()
     {
-        CreateGridGroup();
+        CreateProceduralGrid();
         CleanUp();
     }
 
-    void CreateGridGroup()
+    void CreateProceduralGrid()
     {
         tilemap = GetComponentInChildren<Tilemap>();
         tilemap.CompressBounds();
         BoundsInt bounds = tilemap.cellBounds;
         offset = new Vector2(bounds.xMin, bounds.yMin);
-        
+
+        worldWidth = (bounds.size.x >> 5) + 1;
+        worldHeight = (bounds.size.y >> 5) + 1;
+        worldDataLookup = new int[worldWidth * worldHeight];
+
+        int i = 0;
         for (int x = bounds.xMin; x < bounds.xMax; x += 32)
         {
             for (int y = bounds.yMin; y < bounds.yMax; y += 32)
             {
-                BoundsInt sub = new BoundsInt(x, y, 0, 32, 32, 1);
+                BoundsInt sub = new(x, y, 0, 32, 32, 1);
                 TileBase[] tiles = tilemap.GetTilesBlock(sub);
-                CreateProceduralGrid(x, y, tiles);
-            }
-        }
-    }
+                if (ProceduralGrid.Create(tileIdsLookup, tiles, material, out ProceduralGrid grid))
+                {
+                    grid.transform.parent = transform;
+                    grid.transform.position = tilemap.transform.TransformVector(x, y, 0);
+                    grid.transform.localScale = Vector3.one;
+                    grid.CreateAll();
+                    grid.UpdateAll();
 
-    void CreateProceduralGrid(int x, int y, TileBase[] tiles)
-    {
-        if (ProceduralGrid.Create(tileIdsLookup, tiles, material, out ProceduralGrid grid))
-        {
-            grid.transform.parent = transform;
-            grid.transform.position = tilemap.transform.TransformVector(x, y, 0);
-            grid.transform.localScale = Vector3.one;
-            grid.CreateAll();
-            grid.UpdateAll();
+                    worldDataLookup[i] = worldData.Count;
+                    worldData.Add(grid);
+                }
+                else
+                {
+                    worldDataLookup[i] = -1;
+                }
+                i++;
+            }
         }
     }
 
