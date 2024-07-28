@@ -9,6 +9,7 @@ public class ProceduralGrid : MonoBehaviour
     private List<int> boundaries;
     private float[] compressedTiles;
     private int[] compressedMasks;
+    private int maskCount;
 
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
@@ -134,7 +135,7 @@ public class ProceduralGrid : MonoBehaviour
         col.SetCustomShapes(shapes);
     }
 
-    void UpdateMaterial()
+    void SendTilesToMaterial()
     {
         meshRenderer.material.SetFloatArray("_Tiles", compressedTiles);
     }
@@ -149,15 +150,41 @@ public class ProceduralGrid : MonoBehaviour
     public void UpdateAll()
     {
         UpdateMesh();
-        UpdateMaterial();
         UpdateCollider();
     }
 
     // Assumes that x and y are bounded [0, 31]
-    public void BreakBlock(int x, int y) {
+    public void BreakBlock(int x, int y)
+    {
+        maskCount -= (compressedMasks[y] >> x) & 0x1;
         compressedMasks[y] &= ~(1 << x);
-        CreateAll();
-        UpdateAll();
+    }
+
+    public bool HasBlock(int x, int y)
+    {
+        return (compressedMasks[y] & (1 << x)) != 0;
+    }
+
+    public int GetHighestY(int x)
+    {
+        for (int y = 31; y >= 0; y -= 1)
+        {
+            if (HasBlock(x, y))
+            {
+                return y;
+            }
+        }
+        return -1;
+    }
+
+    public bool IsEmpty()
+    {
+        return maskCount == 0;
+    }
+
+    public void CleanUp()
+    {
+        Destroy(gameObject);
     }
 
     public static bool Create(Dictionary<TileBase, int> tileIdsLookup, TileBase[] tiles, Material material, out ProceduralGrid grid)
@@ -165,7 +192,7 @@ public class ProceduralGrid : MonoBehaviour
         float[] compressedTiles = new float[128];
         int[] compressedMasks = new int[32];
 
-        int count = 0;
+        int maskCount = 0;
 
         int k = 0;
         int l = 0;
@@ -189,7 +216,7 @@ public class ProceduralGrid : MonoBehaviour
                 m += (m7 << (j + 7)) + (m6 << (j + 6)) + (m5 << (j + 5)) + (m4 << (j + 4))
                    + (m3 << (j + 3)) + (m2 << (j + 2)) + (m1 << (j + 1)) + (m0 << j);
 
-                count += m7 + m6 + m5 + m4 + m3 + m2 + m1 + m0;
+                maskCount += m7 + m6 + m5 + m4 + m3 + m2 + m1 + m0;
 
                 compressedTiles[l] = FloatHex(t);
                 l += 1;
@@ -198,7 +225,7 @@ public class ProceduralGrid : MonoBehaviour
             k += 1;
         }
 
-        if (count > 0)
+        if (maskCount > 0)
         {
             GameObject obj = new("Procedural Grid");
             obj.AddComponent<MeshFilter>();
@@ -208,7 +235,12 @@ public class ProceduralGrid : MonoBehaviour
             grid = obj.AddComponent<ProceduralGrid>();
             grid.compressedTiles = compressedTiles;
             grid.compressedMasks = compressedMasks;
+            grid.maskCount = maskCount;
             grid.meshRenderer.material = material;
+
+            grid.SendTilesToMaterial();
+            grid.CreateAll();
+            grid.UpdateAll();
 
             return true;
         }

@@ -61,8 +61,6 @@ public class GridGroup : MonoBehaviour
                     grid.transform.parent = transform;
                     grid.transform.position = tilemap.transform.TransformVector(x, y, 0);
                     grid.transform.localScale = Vector3.one;
-                    grid.CreateAll();
-                    grid.UpdateAll();
 
                     worldDataIndex[i] = worldData.Count;
                     worldData.Add(grid);
@@ -82,19 +80,55 @@ public class GridGroup : MonoBehaviour
         Destroy(GetComponent<Grid>());
     }
 
-    void BreakBlock(int x, int y) {
+    void BreakBlock(int x, int y)
+    {
         if (x < 0 || y < 0 || x >= worldWidth || y >= worldHeight)
         {
             return;
         }
-        int index = (y * gridWidth + x) >> 5;
+        int index = (y >> 5) * gridWidth + (x >> 5);
         if (index == -1)
         {
             return;
         }
-        int localX = x & 0x1F;
-        int localY = y & 0x1F;
         ProceduralGrid grid = worldData[worldDataIndex[index]];
-        grid.BreakBlock(localX, localY);
+        grid.BreakBlock(x & 0x1F, y & 0x1F);
+        if (!grid.IsEmpty())
+        {
+            grid.CreateAll();
+            grid.UpdateAll();
+        }
+        else
+        {
+            grid.CleanUp();
+            worldData[worldDataIndex[index]] = null;
+            worldDataIndex[index] = -1;
+        }
+    }
+
+    int GetHighestY(int x)
+    {
+        if (x < 0 || x >= worldWidth)
+        {
+            return -1;
+        }
+
+        int y = worldHeight - 32;
+        int index = (y >> 5) * gridWidth + (x >> 5);
+        while (y >= 0)
+        {
+            if (worldDataIndex[index] != -1)
+            {
+                break;
+            }
+            y -= 32;
+            index = (y >> 5) * gridWidth + (x >> 5);
+        }
+        if (worldDataIndex[index] != -1)
+        {
+            ProceduralGrid grid = worldData[worldDataIndex[index]];
+            return y + grid.GetHighestY(x & 0x1F);
+        }
+        return -1;
     }
 }
